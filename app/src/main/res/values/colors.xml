@@ -1,0 +1,44 @@
+<resources>
+    <!-- Base -->
+    <color name="bg_primary">#0A0A14</color>
+    <color name="bg_secondary">#12122A</color>
+    <color name="bg_card">#1A1A35</color>
+    <color name="bg_card_elevated">#222245</color>
+    <color name="text_primary">#F0F0F5</color>
+    <color name="text_secondary">#8888AA</color>
+    <color name="text_muted">#555570</color>
+    <color name="divider">#2A2A45</color>
+
+    <!-- Xbox -->
+    <color name="xbox_green">#107C10</color>
+    <color name="xbox_green_light">#1DB954</color>
+    <color name="xbox_green_glow">#2AFF5A</color>
+
+    <!-- DualSense -->
+    <color name="ps_blue">#0070D1</color>
+    <color name="ps_blue_light">#00A4FF</color>
+    <color name="ps_blue_glow">#40C4FF</color>
+    <color name="ps_pink">#E91E90</color>
+
+    <!-- Joy-Con -->
+    <color name="joycon_red">#E60012</color>
+    <color name="joycon_blue">#0AB9E6</color>
+    <color name="joycon_red_glow">#FF4444</color>
+    <color name="joycon_blue_glow">#44DDFF</color>
+
+    <!-- Face buttons -->
+    <color name="btn_a_green">#1DB954</color>
+    <color name="btn_b_red">#E74856</color>
+    <color name="btn_x_blue">#0078D7</color>
+    <color name="btn_y_yellow">#FFB900</color>
+    <color name="ps_cross">#6E97D4</color>
+    <color name="ps_circle">#E8564A</color>
+    <color name="ps_square">#D490C5</color>
+    <color name="ps_triangle">#56C7A2</color>
+
+    <!-- State -->
+    <color name="btn_off">#2A2A45</color>
+    <color name="btn_on">#107C10</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>

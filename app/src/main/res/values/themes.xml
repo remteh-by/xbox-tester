@@ -1,0 +1,10 @@
+<resources>
+    <style name="Theme.GamepadTester" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/ps_blue</item>
+        <item name="colorPrimaryVariant">@color/ps_blue_light</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="android:windowBackground">@color/bg_primary</item>
+        <item name="android:statusBarColor">@color/bg_primary</item>
+        <item name="android:navigationBarColor">@color/bg_primary</item>
+    </style>
+</resources>

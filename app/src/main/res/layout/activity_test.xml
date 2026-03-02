@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/bg_primary" android:fillViewport="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+
+        <!-- Back + Press Count -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingBottom="8dp">
+
+            <TextView android:id="@+id/btnBack" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="← Назад" android:textColor="@color/text_secondary" android:textSize="14sp" android:padding="8dp" />
+
+            <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Нажатий: " android:textColor="@color/text_muted" android:textSize="12sp" />
+
+            <TextView android:id="@+id/tvPressCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/text_secondary" android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Accent Bar + Title -->
+        <View android:id="@+id/accentBar" android:layout_width="80dp" android:layout_height="4dp" android:layout_gravity="start" android:layout_marginBottom="12dp" />
+
+        <TextView android:id="@+id/tvTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:textSize="24sp" android:letterSpacing="0.12" android:paddingBottom="4dp" />
+
+        <TextView android:id="@+id/tvStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="⏳ Ожидание контроллера..." android:textColor="@color/text_secondary" android:textSize="13sp" android:paddingBottom="2dp" />
+
+        <TextView android:id="@+id/tvControllerName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/text_muted" android:textSize="11sp" android:paddingBottom="16dp" />
+
+        <!-- ═══ TRIGGERS ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingBottom="8dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:layout_marginEnd="6dp">
+
+                <TextView android:id="@+id/tvTriggerLLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LT" android:textColor="@color/text_primary" android:textSize="13sp" android:paddingBottom="4dp" />
+
+                <com.remteh.gamepadtester.view.TriggerView android:id="@+id/triggerLT" android:layout_width="match_parent" android:layout_height="36dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:paddingStart="8dp" android:paddingEnd="8dp">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LATENCY" android:textColor="@color/text_muted" android:textSize="9sp" android:letterSpacing="0.15" />
+
+                <TextView android:id="@+id/tvLatency" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="— ms" android:textColor="@color/text_secondary" android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:layout_marginStart="6dp">
+
+                <TextView android:id="@+id/tvTriggerRLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RT" android:textColor="@color/text_primary" android:textSize="13sp" android:paddingBottom="4dp" />
+
+                <com.remteh.gamepadtester.view.TriggerView android:id="@+id/triggerRT" android:layout_width="match_parent" android:layout_height="36dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ═══ BUMPERS / SHOULDERS ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center" android:paddingBottom="12dp">
+
+            <TextView android:id="@+id/btnLB" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="LB" android:textColor="@color/text_primary" android:textSize="15sp" android:layout_marginEnd="6dp" />
+
+            <TextView android:id="@+id/btnRB" android:layout_width="0dp" android:layout_height="44dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="RB" android:textColor="@color/text_primary" android:textSize="15sp" android:layout_marginStart="6dp" />
+        </LinearLayout>
+
+        <!-- ═══ STICKS ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingBottom="8dp">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:layout_marginEnd="6dp">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="L-STICK" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.1" android:paddingBottom="4dp" />
+
+                <com.remteh.gamepadtester.view.StickView android:id="@+id/stickLeft" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
+
+                <TextView android:id="@+id/tvLeftStick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="X:0.00 Y:0.00" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:paddingTop="4dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center" android:layout_marginStart="6dp">
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="R-STICK" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.1" android:paddingBottom="4dp" />
+
+                <com.remteh.gamepadtester.view.StickView android:id="@+id/stickRight" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
+
+                <TextView android:id="@+id/tvRightStick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="X:0.00 Y:0.00" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:paddingTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- L3 / R3 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center" android:paddingBottom="12dp">
+
+            <TextView android:id="@+id/btnL3" android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="L3" android:textColor="@color/text_primary" android:textSize="13sp" android:layout_marginEnd="4dp" />
+
+            <TextView android:id="@+id/btnR3" android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="R3" android:textColor="@color/text_primary" android:textSize="13sp" android:layout_marginStart="4dp" />
+        </LinearLayout>
+
+        <!-- ═══ FACE BUTTONS ═══ -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="FACE BUTTONS" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.12" android:layout_gravity="center" android:paddingBottom="8dp" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center" android:paddingBottom="12dp">
+
+            <TextView android:id="@+id/btnFace1" android:layout_width="56dp" android:layout_height="56dp" android:background="@drawable/face_btn_bg" android:gravity="center" android:text="A" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="8dp" />
+
+            <TextView android:id="@+id/btnFace2" android:layout_width="56dp" android:layout_height="56dp" android:background="@drawable/face_btn_bg" android:gravity="center" android:text="B" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="8dp" />
+
+            <TextView android:id="@+id/btnFace3" android:layout_width="56dp" android:layout_height="56dp" android:background="@drawable/face_btn_bg" android:gravity="center" android:text="X" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="8dp" />
+
+            <TextView android:id="@+id/btnFace4" android:layout_width="56dp" android:layout_height="56dp" android:background="@drawable/face_btn_bg" android:gravity="center" android:text="Y" android:textColor="@color/text_primary" android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- ═══ D-PAD ═══ -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D-PAD" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.12" android:layout_gravity="center" android:paddingBottom="8dp" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center" android:paddingBottom="12dp">
+
+            <TextView android:id="@+id/btnDpadUp" android:layout_width="52dp" android:layout_height="42dp" android:background="@drawable/button_bg" android:gravity="center" android:text="↑" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="4dp" />
+
+            <TextView android:id="@+id/btnDpadDown" android:layout_width="52dp" android:layout_height="42dp" android:background="@drawable/button_bg" android:gravity="center" android:text="↓" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="4dp" />
+
+            <TextView android:id="@+id/btnDpadLeft" android:layout_width="52dp" android:layout_height="42dp" android:background="@drawable/button_bg" android:gravity="center" android:text="←" android:textColor="@color/text_primary" android:textSize="18sp" android:layout_marginEnd="4dp" />
+
+            <TextView android:id="@+id/btnDpadRight" android:layout_width="52dp" android:layout_height="42dp" android:background="@drawable/button_bg" android:gravity="center" android:text="→" android:textColor="@color/text_primary" android:textSize="18sp" />
+        </LinearLayout>
+
+        <!-- ═══ MENU BUTTONS ═══ -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center" android:paddingBottom="8dp">
+
+            <TextView android:id="@+id/btnSelect" android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="VIEW" android:textColor="@color/text_primary" android:textSize="10sp" android:layout_marginEnd="3dp" />
+
+            <TextView android:id="@+id/btnSystem" android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="HOME" android:textColor="@color/text_primary" android:textSize="10sp" android:layout_marginStart="3dp" android:layout_marginEnd="3dp" />
+
+            <TextView android:id="@+id/btnStart" android:layout_width="0dp" android:layout_height="38dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="MENU" android:textColor="@color/text_primary" android:textSize="10sp" android:layout_marginStart="3dp" />
+        </LinearLayout>
+
+        <TextView android:id="@+id/btnExtra" android:layout_width="match_parent" android:layout_height="38dp" android:background="@drawable/button_bg" android:gravity="center" android:text="SHARE" android:textColor="@color/text_primary" android:textSize="10sp" android:layout_marginBottom="16dp" />
+
+        <!-- ═══ VIBRATION TEST ═══ -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🔊 VIBRATION TEST" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.12" android:paddingBottom="8dp" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingBottom="16dp">
+
+            <TextView android:id="@+id/btnVibShort" android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="Short" android:textColor="@color/text_primary" android:textSize="12sp" android:layout_marginEnd="3dp" />
+
+            <TextView android:id="@+id/btnVibMedium" android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="Medium" android:textColor="@color/text_primary" android:textSize="12sp" android:layout_marginStart="3dp" android:layout_marginEnd="3dp" />
+
+            <TextView android:id="@+id/btnVibLong" android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="Long" android:textColor="@color/text_primary" android:textSize="12sp" android:layout_marginStart="3dp" android:layout_marginEnd="3dp" />
+
+            <TextView android:id="@+id/btnVibPattern" android:layout_width="0dp" android:layout_height="42dp" android:layout_weight="1" android:background="@drawable/button_bg" android:gravity="center" android:text="Pattern" android:textColor="@color/text_primary" android:textSize="12sp" android:layout_marginStart="3dp" />
+        </LinearLayout>
+
+        <!-- ═══ CALIBRATION ═══ -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="🎯 CALIBRATION" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.12" android:paddingBottom="8dp" />
+
+        <!-- Dead Zone Slider -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingBottom="8dp">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dead Zone: " android:textColor="@color/text_secondary" android:textSize="12sp" />
+
+            <SeekBar android:id="@+id/seekDeadZone" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:max="30" android:progress="8" />
+
+            <TextView android:id="@+id/tvDeadZoneVal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="8%" android:textColor="@color/text_primary" android:textSize="12sp" android:paddingStart="8dp" />
+        </LinearLayout>
+
+        <!-- Calibration Info -->
+        <TextView android:id="@+id/tvCalibInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/raw_data_bg" android:text="Двигай стики и жми триггеры для калибровки" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:padding="10dp" android:minHeight="56dp" android:layout_marginBottom="8dp" />
+
+        <TextView android:id="@+id/btnResetCalib" android:layout_width="match_parent" android:layout_height="36dp" android:background="@drawable/button_bg" android:gravity="center" android:text="🔄 СБРОС КАЛИБРОВКИ" android:textColor="@color/text_secondary" android:textSize="11sp" android:letterSpacing="0.05" android:layout_marginBottom="16dp" />
+
+        <!-- ═══ RAW DATA ═══ -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📊 RAW INPUT DATA" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.12" android:paddingBottom="4dp" />
+
+        <TextView android:id="@+id/tvRawData" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/raw_data_bg" android:text="No input detected" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:padding="12dp" android:minHeight="72dp" android:layout_marginBottom="16dp" />
+
+        <!-- ═══ BRANDING ═══ -->
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginBottom="12dp" />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Created by RemTeh.by
+            android:paddingBottom="60dp"" android:textColor="@color/text_muted" android:textSize="11sp" android:gravity="center" android:letterSpacing="0.08" android:paddingBottom="16dp" />
+
+    </LinearLayout>
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
+</ScrollView>
