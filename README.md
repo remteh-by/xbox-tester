@@ -13,7 +13,6 @@
 <p>
   <a href="#-english">English</a> •
   <a href="#-русский">Русский</a> •
-  <a href="#-беларуская">Беларуская</a> •
   <a href="#-deutsch">Deutsch</a> •
   <a href="#-polski">Polski</a> •
   <a href="#-中文">中文</a>
@@ -21,7 +20,7 @@
 
 ---
 
-### 💳 Purchase / Купить / Купіць
+### 💳 Purchase / Купить
 
 <p>
   <a href="#"><img src="https://img.shields.io/badge/Google_Play-Buy_Now-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play"></a>
