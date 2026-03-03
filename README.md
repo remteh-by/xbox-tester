@@ -114,8 +114,10 @@
 
 <div align="center">
 
-⚖️ **Proprietary Software** · © 2025 RemTeh.by · [LICENSE](LICENSE)
+⚖️ **Proprietary Software** · © 2025 ООО «РемТех Электроникс» · [LICENSE](LICENSE)
 
-<sub>Made by <a href="https://github.com/remteh-by">RemTeh.by</a> 🇧🇾</sub>
+<sub>Made by <a href="https://github.com/remteh-by">ООО «РемТех Электроникс»</a> 🇧🇾</sub>
+<br>
+<sub>УНП 193626868 · г. Минск, пр-т Рокоссовского 17/1, пом. 29</sub>
 
 </div>
