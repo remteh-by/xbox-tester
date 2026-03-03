@@ -27,7 +27,7 @@
 
 <p>
   <a href="#"><img src="https://img.shields.io/badge/Google_Play-Buy_Now-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play"></a>
-  <a href="https://www.paypal.com/paypalme/remtehby"><img src="https://img.shields.io/badge/PayPal-Buy_Now-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
+  <a href="#"><img src="https://img.shields.io/badge/PayPal-Buy_Now-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
 </p>
 
 > ⚠️ **This is proprietary software.** Source code is provided for review purposes only. A valid purchased license is required to use this application.
