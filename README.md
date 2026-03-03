@@ -7,8 +7,7 @@
 <p>
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android">
   <img src="https://img.shields.io/badge/Controller-Xbox_Series-107C10?style=flat-square&logo=xbox&logoColor=white" alt="Xbox">
-  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="MIT">
-  <img src="https://img.shields.io/github/v/release/remteh-by/xbox-tester?style=flat-square&color=107C10" alt="Release">
+  <img src="https://img.shields.io/badge/License-Proprietary-red?style=flat-square" alt="Proprietary">
 </p>
 
 <p>
@@ -20,13 +19,22 @@
   <a href="#-中文">中文</a>
 </p>
 
+---
+
+### 💳 Purchase / Купить / Купіць
+
+<p>
+  <a href="#"><img src="https://img.shields.io/badge/Google_Play-Buy_Now-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play"></a>
+  <a href="https://www.paypal.com/paypalme/remtehby"><img src="https://img.shields.io/badge/PayPal-Buy_Now-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
+</p>
+
+> ⚠️ **This is proprietary software.** Source code is provided for review purposes only. A valid purchased license is required to use this application.
+
 </div>
 
 ---
 
 ## 🇬🇧 English
-
-### Features
 
 | Feature | Description |
 |---|---|
@@ -37,107 +45,75 @@
 | 📊 **Calibration** | Min/max tracking with one-tap reset |
 | ⏱ **Diagnostics** | Input latency, hold time, press counter, raw axis data |
 
-### Install
-
-Download APK from [Releases](https://github.com/remteh-by/xbox-tester/releases).
-
-### Build
-
-```bash
-./gradlew assembleDebug          # Debug APK
-./gradlew assembleRelease        # Signed release APK
-./gradlew bundleRelease          # AAB for Play Store
-```
-
 ---
 
 ## 🇷🇺 Русский
 
-### Возможности
-
 | Функция | Описание |
 |---|---|
 | 🔘 **Кнопки** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Стики** | Визуализация в реальном времени с калибровкой мёртвой зоны (0-30%) |
+| 🕹️ **Стики** | Визуализация с калибровкой мёртвой зоны (0-30%) |
 | 🎯 **Триггеры** | Точное отображение давления LT/RT |
-| 🔊 **Вибрация** | Тест тактильного отклика: короткая, средняя, длинная + паттерн |
+| 🔊 **Вибрация** | Тест: короткая, средняя, длинная + паттерн |
 | 📊 **Калибровка** | Отслеживание min/max, сброс одной кнопкой |
-| ⏱ **Диагностика** | Задержка ввода, время удержания, счётчик нажатий, raw-данные |
+| ⏱ **Диагностика** | Задержка ввода, время удержания, raw-данные |
 
-### Установка
-
-Скачайте APK из раздела [Releases](https://github.com/remteh-by/xbox-tester/releases).
+**Как купить:** Приобретите в **Google Play** или через **PayPal** по ссылкам выше.
 
 ---
 
 ## 🇧🇾 Беларуская
 
-### Магчымасці
-
 | Функцыя | Апісанне |
 |---|---|
 | 🔘 **Кнопкі** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Стыкі** | Візуалізацыя ў рэальным часе з каліброўкай мёртвай зоны (0-30%) |
+| 🕹️ **Стыкі** | Візуалізацыя з каліброўкай мёртвай зоны (0-30%) |
 | 🎯 **Трыгеры** | Дакладнае адлюстраванне ціску LT/RT |
-| 🔊 **Вібрацыя** | Тэст тактыльнага водгуку: кароткая, сярэдняя, доўгая + патэрн |
 
-### Спампаваць
-
-Спампуйце APK з раздзела [Releases](https://github.com/remteh-by/xbox-tester/releases).
+**Як купіць:** Набудзьце ў **Google Play** або праз **PayPal**.
 
 ---
 
 ## 🇩🇪 Deutsch
-
-### Funktionen
 
 | Funktion | Beschreibung |
 |---|---|
 | 🔘 **Tasten** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
 | 🕹️ **Sticks** | Echtzeit-Visualisierung mit Totzonen-Kalibrierung (0-30%) |
 | 🎯 **Trigger** | Präzise LT/RT-Druckanzeige |
-| 🔊 **Vibration** | Gamepad-Haptik testen: kurz, mittel, lang + Muster |
 
-### Herunterladen
-
-APK aus dem Bereich [Releases](https://github.com/remteh-by/xbox-tester/releases) herunterladen.
+**Kaufen:** Im **Google Play Store** oder über **PayPal**.
 
 ---
 
 ## 🇵🇱 Polski
 
-### Funkcje
-
 | Funkcja | Opis |
 |---|---|
 | 🔘 **Przyciski** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Analogi** | Wizualizacja w czasie rzeczywistym z kalibracją martwej strefy (0-30%) |
+| 🕹️ **Analogi** | Wizualizacja z kalibracją martwej strefy (0-30%) |
 | 🎯 **Triggery** | Precyzyjne wyświetlanie nacisku LT/RT |
-| 🔊 **Wibracje** | Test haptyki gamepada: krótka, średnia, długa + wzór |
 
-### Pobierz
-
-Pobierz APK z sekcji [Releases](https://github.com/remteh-by/xbox-tester/releases).
+**Kup:** W **Google Play** lub przez **PayPal**.
 
 ---
 
 ## 🇨🇳 中文
 
-### 功能
-
 | 功能 | 描述 |
 |---|---|
 | 🔘 **按钮** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **摇杆** | 实时可视化，支持死区校准（0-30%） |
-| 🎯 **扳机** | 精确显示 LT/RT 压力 |
-| 🔊 **振动** | 测试手柄触觉反馈：短、中、长 + 自定义模式 |
+| 🕹️ **摇杆** | 实时可视化，死区校准（0-30%） |
+| 🎯 **扳机** | 精确 LT/RT 压力显示 |
 
-### 下载
-
-从 [Releases](https://github.com/remteh-by/xbox-tester/releases) 下载 APK。
+**购买：** 通过 **Google Play** 或 **PayPal**。
 
 ---
 
 <div align="center">
-<sub>Made by <a href="https://github.com/remteh-by">RemTeh.by</a> 🇧🇾 with ❤️</sub>
+
+⚖️ **Proprietary Software** · © 2025 RemTeh.by · [LICENSE](LICENSE)
+
+<sub>Made by <a href="https://github.com/remteh-by">RemTeh.by</a> 🇧🇾</sub>
+
 </div>
