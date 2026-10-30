@@ -1,0 +1,30 @@
+// Read release credentials only from environment or private user Gradle properties.
+def credentialNames = ['REMTEH_KEYSTORE_FILE', 'REMTEH_KEYSTORE_PASSWORD', 'REMTEH_KEY_ALIAS', 'REMTEH_KEY_PASSWORD']
+def credentials = credentialNames.collectEntries { name ->
+    [(name): providers.environmentVariable(name).orElse(providers.gradleProperty(name)).orNull]
+}
+def missing = credentialNames.findAll { !credentials[it]?.trim() }
+if (missing.isEmpty()) {
+    android.signingConfigs.create('release') {
+        storeFile rootProject.file(credentials.REMTEH_KEYSTORE_FILE)
+        storePassword credentials.REMTEH_KEYSTORE_PASSWORD
+        keyAlias credentials.REMTEH_KEY_ALIAS
+        keyPassword credentials.REMTEH_KEY_PASSWORD
+    }
+    android.buildTypes.release.signingConfig = android.signingConfigs.release
+}
+def requireReleaseSigning = tasks.register('requireReleaseSigning') {
+    doLast {
+        if (!missing.isEmpty()) {
+            throw new GradleException('Release signing is not configured. Set: ' + missing.join(', ') + '. See docs/BUILDING.md. Debug builds do not require release credentials.')
+        }
+        if (!rootProject.file(credentials.REMTEH_KEYSTORE_FILE).isFile()) {
+            throw new GradleException('The release keystore is unavailable. Keep the existing signing certificate; do not substitute a new key.')
+        }
+    }
+}
+tasks.configureEach { task ->
+    if (task.name in ['packageRelease', 'bundleRelease', 'assembleRelease']) {
+        task.dependsOn(requireReleaseSigning)
+    }
+}

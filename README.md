@@ -1,123 +1,38 @@
-<div align="center">
+# Xbox Tester
 
-# 🟢 Xbox Controller Tester
+Android diagnostic application for Xbox controller. The source candidate is **1.1.0 / build 2**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
 
-### Xbox Series X|S Controller Testing App for Android
+## Что изменено в 1.1.0
 
-<p>
-  <img src="https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/iOS-000000?style=flat-square&logo=apple&logoColor=white" alt="iOS">
-  <img src="https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white" alt="macOS">
-  <img src="https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white" alt="Windows">
-  <img src="https://img.shields.io/badge/Controller-Xbox_Series-107C10?style=flat-square&logo=xbox&logoColor=white" alt="Xbox">
-  <img src="https://img.shields.io/badge/License-Proprietary-red?style=flat-square" alt="Proprietary">
-</p>
+- Исходные значения Android API сохраняются до фильтра отображения. Dead zone меняет картинку, а не результаты теста.
+- Min/max, среднее и разброс не предполагают нулевой исходный диапазон. «Тест покоя» собирает отдельную выборку, пока вы не трогаете стики.
+- Интервал событий показан как интервал событий, а не аппаратная задержка.
+- Активный контроллер выбирается явно; другой геймпад и отключённая клавиатура не смешивают сессию.
+- Вибрация проверяет доступные моторы контроллера. Телефон не подменяет отсутствующий мотор.
+- История 20 сессий, комментарий мастера, экспорт JSON / печатного HTML и сравнение до/после. Отчёты остаются на устройстве; перед передачей проверьте комментарии.
+- Управление кнопками, рекламным view и вибрацией очищается при уходе с экрана.
 
-<p>
-  <a href="#-english">English</a> •
-  <a href="#-русский">Русский</a> •
-  <a href="#-deutsch">Deutsch</a> •
-  <a href="#-polski">Polski</a> •
-  <a href="#-中文">中文</a>
-</p>
+## Как измерять
 
----
+1. Подключите контроллер по USB или Bluetooth и выберите «Устройство».
+2. Начните новую сессию. Для центра стиков включите «Тест покоя» и отпустите стики. Нет событий — «не измерено», а не доказательство исправности.
+3. Проверьте полный ход осей, кнопки и доступную вибрацию. Вывод зависит от драйвера Android и транспорта.
+4. Экспортируйте JSON или HTML. HTML можно открыть в браузере и распечатать в PDF. Импорт открывает сравнение, не заменяя текущую сессию.
 
-### 💳 Purchase / Купить
+Приложение не пишет калибровку в прошивку, не измеряет end-to-end latency и не гарантирует поддержку адаптивных триггеров, гироскопа, парных Joy-Con или независимого управления каждым мотором, если Android не предоставляет эти функции. Названия Xbox/DualSense/Joy-Con обозначают интерфейс профиля, а не сертификацию каждого устройства.
 
-<p>
-  <a href="#"><img src="https://img.shields.io/badge/Google_Play-Buy_Now-414141?style=for-the-badge&logo=google-play&logoColor=white" alt="Google Play"></a>
-  <a href="https://paypal.me/remtehby"><img src="https://img.shields.io/badge/PayPal-Buy_Now-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
-</p>
+## Build / сборка
 
-> ⚠️ **This is proprietary software.** Source code is provided for review purposes only. A valid purchased license is required to use this application.
+[Build and signing instructions](docs/BUILDING.md) · [Shared diagnostics module](docs/DEVICE-LAB.md) · [Changes](CHANGELOG.md).
 
-</div>
+Use JDK 17, Android SDK 35 and the committed Gradle 8.9 wrapper. Debug builds need no release secrets. A release requires the existing private signing identity; a new debug certificate cannot update a store-installed app. CI APKs are validation artifacts, not a claim of device acceptance.
 
----
+## Distribution and acceptance
 
-## 🇬🇧 English
+See the [release list](https://github.com/remteh-by/xbox-tester/releases) for actually published files. This README does not claim that the 1.1.0 candidate is already published. There is no verified Google Play purchase URL in this repository; no placeholder purchase button is offered.
 
-| Feature | Description |
-|---|---|
-| 🔘 **Buttons** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Sticks** | Real-time visualization with dead zone calibration (0-30%) |
-| 🎯 **Triggers** | Precise LT/RT pressure display |
-| 🔊 **Vibration** | Test gamepad haptics: short, medium, long + pattern |
-| 📊 **Calibration** | Min/max tracking with one-tap reset |
-| ⏱ **Diagnostics** | Input latency, hold time, press counter, raw axis data |
+Current validation: shared diagnostics unit tests, Android debug build and lint. Pending: launch on a physical Android device, USB and Bluetooth with Xbox controller, device switching, real vibration and update over the existing signed app. Debug installation must not replace or delete user data to work around a certificate mismatch.
 
----
+## License
 
-## 🇷🇺 Русский
-
-| Функция | Описание |
-|---|---|
-| 🔘 **Кнопки** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Стики** | Визуализация с калибровкой мёртвой зоны (0-30%) |
-| 🎯 **Триггеры** | Точное отображение давления LT/RT |
-| 🔊 **Вибрация** | Тест: короткая, средняя, длинная + паттерн |
-| 📊 **Калибровка** | Отслеживание min/max, сброс одной кнопкой |
-| ⏱ **Диагностика** | Задержка ввода, время удержания, raw-данные |
-
-**Как купить:** Приобретите в **Google Play** или через **PayPal** по ссылкам выше.
-
----
-
-## 🇧🇾 Беларуская
-
-| Функцыя | Апісанне |
-|---|---|
-| 🔘 **Кнопкі** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Стыкі** | Візуалізацыя з каліброўкай мёртвай зоны (0-30%) |
-| 🎯 **Трыгеры** | Дакладнае адлюстраванне ціску LT/RT |
-
-**Як купіць:** Набудзьце ў **Google Play** або праз **PayPal**.
-
----
-
-## 🇩🇪 Deutsch
-
-| Funktion | Beschreibung |
-|---|---|
-| 🔘 **Tasten** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Sticks** | Echtzeit-Visualisierung mit Totzonen-Kalibrierung (0-30%) |
-| 🎯 **Trigger** | Präzise LT/RT-Druckanzeige |
-
-**Kaufen:** Im **Google Play Store** oder über **PayPal**.
-
----
-
-## 🇵🇱 Polski
-
-| Funkcja | Opis |
-|---|---|
-| 🔘 **Przyciski** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **Analogi** | Wizualizacja z kalibracją martwej strefy (0-30%) |
-| 🎯 **Triggery** | Precyzyjne wyświetlanie nacisku LT/RT |
-
-**Kup:** W **Google Play** lub przez **PayPal**.
-
----
-
-## 🇨🇳 中文
-
-| 功能 | 描述 |
-|---|---|
-| 🔘 **按钮** | A B X Y • LB/RB • Menu ≡ • View ⧉ • Xbox Ⓧ • Share ⬆ |
-| 🕹️ **摇杆** | 实时可视化，死区校准（0-30%） |
-| 🎯 **扳机** | 精确 LT/RT 压力显示 |
-
-**购买：** 通过 **Google Play** 或 **PayPal**。
-
----
-
-<div align="center">
-
-⚖️ **Proprietary Software** · © 2025 ООО «РемТех Электроникс» · [LICENSE](LICENSE)
-
-<sub>Made by <a href="https://github.com/remteh-by">ООО «РемТех Электроникс»</a> 🇧🇾</sub>
-<br>
-<sub>УНП 193626868 · г. Минск, пр-т Рокоссовского 17/1, пом. 29</sub>
-
-</div>
+The existing [proprietary license](LICENSE) remains in force. Source availability does not change the licensing terms. License/purchase arrangements must be confirmed through a verified owner channel; a donation does not automatically grant a license.
