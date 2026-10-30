@@ -10,3 +10,14 @@
 local.properties
 *.jks
 app/build/
+
+/keystore.properties
+*.keystore
+*.p12
+*.pfx
+
+# Local JVM crash dumps (may contain private process memory)
+*.hprof
+hs_err_pid*.log
+
+**/build/
