@@ -31,12 +31,12 @@
 
                 <TextView android:id="@+id/tvTriggerLLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LT" android:textColor="@color/text_primary" android:textSize="13sp" android:paddingBottom="4dp" />
 
-                <com.remteh.gamepadtester.view.TriggerView android:id="@+id/triggerLT" android:layout_width="match_parent" android:layout_height="36dp" />
+                <com.remteh.xboxtester.view.TriggerView android:id="@+id/triggerLT" android:layout_width="match_parent" android:layout_height="36dp" />
             </LinearLayout>
 
             <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:paddingStart="8dp" android:paddingEnd="8dp">
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LATENCY" android:textColor="@color/text_muted" android:textSize="9sp" android:letterSpacing="0.15" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="EVENT INTERVAL" android:textColor="@color/text_muted" android:textSize="9sp" android:letterSpacing="0.15" />
 
                 <TextView android:id="@+id/tvLatency" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="— ms" android:textColor="@color/text_secondary" android:textSize="14sp" />
             </LinearLayout>
@@ -45,7 +45,7 @@
 
                 <TextView android:id="@+id/tvTriggerRLabel" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="RT" android:textColor="@color/text_primary" android:textSize="13sp" android:paddingBottom="4dp" />
 
-                <com.remteh.gamepadtester.view.TriggerView android:id="@+id/triggerRT" android:layout_width="match_parent" android:layout_height="36dp" />
+                <com.remteh.xboxtester.view.TriggerView android:id="@+id/triggerRT" android:layout_width="match_parent" android:layout_height="36dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -64,7 +64,7 @@
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="L-STICK" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.1" android:paddingBottom="4dp" />
 
-                <com.remteh.gamepadtester.view.StickView android:id="@+id/stickLeft" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
+                <com.remteh.xboxtester.view.StickView android:id="@+id/stickLeft" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
 
                 <TextView android:id="@+id/tvLeftStick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="X:0.00 Y:0.00" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:paddingTop="4dp" />
             </LinearLayout>
@@ -73,7 +73,7 @@
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="R-STICK" android:textColor="@color/text_primary" android:textSize="11sp" android:letterSpacing="0.1" android:paddingBottom="4dp" />
 
-                <com.remteh.gamepadtester.view.StickView android:id="@+id/stickRight" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
+                <com.remteh.xboxtester.view.StickView android:id="@+id/stickRight" android:layout_width="140dp" android:layout_height="140dp" android:background="@drawable/stick_bg" />
 
                 <TextView android:id="@+id/tvRightStick" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="X:0.00 Y:0.00" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:paddingTop="4dp" />
             </LinearLayout>
@@ -155,7 +155,7 @@
         </LinearLayout>
 
         <!-- Calibration Info -->
-        <TextView android:id="@+id/tvCalibInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/raw_data_bg" android:text="Двигай стики и жми триггеры для калибровки" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:padding="10dp" android:minHeight="56dp" android:layout_marginBottom="8dp" />
+        <TextView android:id="@+id/tvCalibInfo" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/raw_data_bg" android:text="Двигай стики и жми триггеры для измерений" android:textColor="@color/text_muted" android:textSize="10sp" android:fontFamily="monospace" android:padding="10dp" android:minHeight="56dp" android:layout_marginBottom="8dp" />
 
         <TextView android:id="@+id/btnResetCalib" android:layout_width="match_parent" android:layout_height="36dp" android:background="@drawable/button_bg" android:gravity="center" android:text="🔄 СБРОС КАЛИБРОВКИ" android:textColor="@color/text_secondary" android:textSize="11sp" android:letterSpacing="0.05" android:layout_marginBottom="16dp" />
 
@@ -167,8 +167,7 @@
         <!-- ═══ BRANDING ═══ -->
         <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" android:layout_marginBottom="12dp" />
 
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Created by RemTeh.by
-            android:paddingBottom="60dp"" android:textColor="@color/text_muted" android:textSize="11sp" android:gravity="center" android:letterSpacing="0.08" android:paddingBottom="16dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Created by RemTeh.by" android:textColor="@color/text_muted" android:textSize="11sp" android:gravity="center" android:letterSpacing="0.08" android:paddingBottom="16dp" />
 
     </LinearLayout>
     <com.google.android.gms.ads.AdView

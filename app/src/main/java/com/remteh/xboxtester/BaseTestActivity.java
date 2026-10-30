@@ -5,6 +5,26 @@ import android.graphics.drawable.GradientDrawable;
 import android.hardware.input.InputManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.net.Uri;
+import android.widget.Button;
+import android.widget.EditText;
+import android.text.InputFilter;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.remteh.diagnostics.InputDiagnostics;
+import org.json.JSONObject;
+import org.json.JSONArray;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.InputDevice;
@@ -15,6 +35,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import com.remteh.xboxtester.view.StickView;
 import com.remteh.xboxtester.view.TriggerView;
@@ -48,6 +72,26 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     protected long lastInputTime = 0;
     protected Map<Integer, Long> buttonPressTime = new HashMap<>();
 
+    protected InputDiagnostics.Session measurements = new InputDiagnostics.Session();
+    private JSONArray recentSamples = new JSONArray();
+    private long firstEventMillis = -1;
+    private String sessionId = UUID.randomUUID().toString();
+    private long sessionStarted = System.currentTimeMillis();
+    private long sessionMono = SystemClock.elapsedRealtime();
+    private String comment = "";
+    private String previousSession = null;
+    private JSONObject capabilities = new JSONObject();
+    private String reportDeviceName = "Не выбран";
+    private boolean restTest = false;
+    private Button restButton;
+    private String pendingExport;
+    private final ActivityResultLauncher<String> exportReport = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/json"), this::writeReport);
+    private final ActivityResultLauncher<String> exportPrintable = registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("text/html"), this::writeReport);
+    private final ActivityResultLauncher<String> importReport = registerForActivityResult(
+            new ActivityResultContracts.GetContent(), this::compareReport);
+
     // Calibration data
     protected float deadZone = 0.08f;
     protected float lxMin = 0, lxMax = 0, lyMin = 0, lyMax = 0;
@@ -59,14 +103,14 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     protected abstract String getControllerTitle();
     protected abstract String[] getFaceButtonLabels();
     protected abstract int[] getFaceButtonColors();
-    protected abstract String getShoulderLeftLabel();   // LB / L1 / L
-    protected abstract String getShoulderRightLabel();  // RB / R1 / R
-    protected abstract String getTriggerLeftLabel();    // LT / L2 / ZL
-    protected abstract String getTriggerRightLabel();   // RT / R2 / ZR
-    protected abstract String getStartLabel();          // Menu / Options / +
-    protected abstract String getSelectLabel();         // View / Create / -
-    protected abstract String getSystemLabel();         // Xbox / PS / Home
-    protected abstract String getExtraLabel();          // Share / Touchpad / Capture
+    protected abstract String getShoulderLeftLabel();
+    protected abstract String getShoulderRightLabel();
+    protected abstract String getTriggerLeftLabel();
+    protected abstract String getTriggerRightLabel();
+    protected abstract String getStartLabel();
+    protected abstract String getSelectLabel();
+    protected abstract String getSystemLabel();
+    protected abstract String getExtraLabel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +123,16 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
         checkConnectedDevices();
         setupVibrationButtons();
         setupCalibration();
+        setupSessionActions();
+        initAds();
+    }
+
+    private void initAds() {
+        MobileAds.initialize(this, initializationStatus -> {});
+        AdView adView = findViewById(R.id.adView);
+        if (adView != null) {
+            adView.loadAd(new AdRequest.Builder().build());
+        }
     }
 
     protected void initViews() {
@@ -173,32 +227,37 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
         stickLeft.setDeadZone(deadZone);
         stickRight.setDeadZone(deadZone);
 
-        btnResetCalib.setOnClickListener(v -> resetCalibration());
+        btnResetCalib.setOnClickListener(v -> { saveLastReport(); clearLiveInput(); resetCalibration(); });
     }
 
     protected void resetCalibration() {
         lxMin = lxMax = lyMin = lyMax = 0;
         rxMin = rxMax = ryMin = ryMax = 0;
         ltMin = ltMax = rtMin = rtMax = 0;
-        tvCalibInfo.setText("Калибровка сброшена. Двигай стики и жми триггеры.");
+        measurements = new InputDiagnostics.Session();
+        recentSamples = new JSONArray();
+        firstEventMillis = -1;
+        sessionId = UUID.randomUUID().toString();
+        sessionStarted = System.currentTimeMillis();
+        sessionMono = SystemClock.elapsedRealtime();
+        comment = ""; previousSession = null;
+        totalPresses = 0;
+        tvPressCount.setText("0");
+        tvCalibInfo.setText("Новая сессия измерений. Настройки контроллера не изменены.");
     }
 
     protected void updateCalibration(float lx, float ly, float rx, float ry, float lt, float rt) {
-        lxMin = Math.min(lxMin, lx); lxMax = Math.max(lxMax, lx);
-        lyMin = Math.min(lyMin, ly); lyMax = Math.max(lyMax, ly);
-        rxMin = Math.min(rxMin, rx); rxMax = Math.max(rxMax, rx);
-        ryMin = Math.min(ryMin, ry); ryMax = Math.max(ryMax, ry);
-        ltMin = Math.min(ltMin, lt); ltMax = Math.max(ltMax, lt);
-        rtMin = Math.min(rtMin, rt); rtMax = Math.max(rtMax, rt);
-
-        tvCalibInfo.setText(String.format(Locale.US,
-                "L-Stick X:[%.2f..%.2f] Y:[%.2f..%.2f]\n" +
-                "R-Stick X:[%.2f..%.2f] Y:[%.2f..%.2f]\n" +
-                "%s:[%.2f..%.2f]  %s:[%.2f..%.2f]",
-                lxMin, lxMax, lyMin, lyMax,
-                rxMin, rxMax, ryMin, ryMax,
-                getTriggerLeftLabel(), ltMin, ltMax,
-                getTriggerRightLabel(), rtMin, rtMax));
+        StringBuilder text = new StringBuilder("Исходные значения Android API (до фильтра приложения)\n");
+        for (int i = 0; i < InputDiagnostics.AXES.length; i++) {
+            InputDiagnostics.Axis axis = measurements.axis(i);
+            text.append(InputDiagnostics.AXES[i]).append(": ");
+            if (axis.count() == 0) text.append("не измерено / недоступно\n");
+            else text.append(String.format(Locale.US, "[%.3f..%.3f], N=%d\n", axis.min(), axis.max(), axis.count()));
+        }
+        if (restTest) text.append("Тест покоя: не трогайте стики. Среднее и разброс сохраняются в отчёте.\n");
+        InputDiagnostics.Axis intervals = measurements.intervals();
+        tvLatency.setText(intervals.count() == 0 ? "—" : String.format(Locale.US, "%.1f ms", intervals.mean()));
+        tvCalibInfo.setText(text.toString());
     }
 
     protected void setupVibrationButtons() {
@@ -212,57 +271,79 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
 
     // --- Gamepad vibration (not system vibrator!) ---
 
-    protected void vibrateGamepad(long ms) {
-        Vibrator vibrator = getGamepadVibrator();
-        if (vibrator != null && vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                vibrator.vibrate(ms);
+    protected List<Vibrator> getGamepadVibrators() {
+        List<Vibrator> result = new ArrayList<>();
+        if (connectedDevice == null) return result;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            android.os.VibratorManager manager = connectedDevice.getVibratorManager();
+            for (int id : manager.getVibratorIds()) {
+                Vibrator motor = manager.getVibrator(id);
+                if (motor != null && motor.hasVibrator()) result.add(motor);
             }
         } else {
-            // Fallback to system vibrator
-            Vibrator sysVib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-            if (sysVib != null && sysVib.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sysVib.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
-                } else {
-                    sysVib.vibrate(ms);
-                }
-            }
+            Vibrator motor = connectedDevice.getVibrator();
+            if (motor != null && motor.hasVibrator()) result.add(motor);
+        }
+        return result;
+    }
+
+    protected void vibrateGamepad(long ms) {
+        List<Vibrator> motors = getGamepadVibrators();
+        if (motors.isEmpty()) {
+            Toast.makeText(this, "Вибрация контроллера недоступна через это подключение. Мотор телефона не используется.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        for (Vibrator motor : motors) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                motor.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE));
+            else motor.vibrate(ms);
         }
     }
 
     protected void vibrateGamepadPattern() {
+        List<Vibrator> motors = getGamepadVibrators();
+        if (motors.isEmpty()) { vibrateGamepad(100); return; }
         long[] pattern = {0, 100, 80, 100, 80, 300};
-        Vibrator vibrator = getGamepadVibrator();
-        if (vibrator != null && vibrator.hasVibrator()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1));
-            } else {
-                vibrator.vibrate(pattern, -1);
-            }
-        } else {
-            Vibrator sysVib = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-            if (sysVib != null && sysVib.hasVibrator()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sysVib.vibrate(VibrationEffect.createWaveform(pattern, -1));
-                } else {
-                    sysVib.vibrate(pattern, -1);
-                }
-            }
+        for (Vibrator motor : motors) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                motor.vibrate(VibrationEffect.createWaveform(pattern, -1));
+            else motor.vibrate(pattern, -1);
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected Vibrator getGamepadVibrator() {
-        if (connectedDevice == null) return null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            android.os.VibratorManager vm = connectedDevice.getVibratorManager();
-            int[] ids = vm.getVibratorIds();
-            if (ids.length > 0) return vm.getVibrator(ids[0]);
-        }
-        return connectedDevice.getVibrator();
+        List<Vibrator> motors = getGamepadVibrators();
+        return motors.isEmpty() ? null : motors.get(0);
+    }
+
+    protected void stopVibration() {
+        for (Vibrator motor : getGamepadVibrators()) motor.cancel();
+    }
+
+    private boolean acceptDevice(InputDevice device) {
+        if (device == null || !isGamepad(device)) return false;
+        if (connectedDevice == null) onGamepadConnected(device);
+        return connectedDevice.getId() == device.getId();
+    }
+
+    private int supportedAxis(InputDevice device, int preferred, int fallback) {
+        if (device.getMotionRange(preferred) != null) return preferred;
+        return device.getMotionRange(fallback) != null ? fallback : -1;
+    }
+
+    private String axisText(float value) {
+        return InputDiagnostics.finite(value) ? String.format(Locale.US, "%.3f", value) : "недоступно";
+    }
+
+    private float rawAxis(MotionEvent event, int axis) {
+        return axis < 0 || event.getDevice().getMotionRange(axis) == null ? Float.NaN : event.getAxisValue(axis);
+    }
+
+    private float displayAxis(InputDevice device, int axis, float raw, boolean trigger) {
+        InputDevice.MotionRange range = axis < 0 ? null : device.getMotionRange(axis);
+        if (range == null) return 0;
+        return trigger ? InputDiagnostics.normalizeTrigger(raw, range.getMin(), range.getMax())
+                : InputDiagnostics.filterStick(raw, range.getMin(), range.getMax(), deadZone);
     }
 
     // --- Analog input ---
@@ -270,68 +351,40 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
         InputDevice device = event.getDevice();
-        if (device == null || !isGamepad(device)) return super.onGenericMotionEvent(event);
-
-        long now = System.nanoTime();
-        if (lastInputTime > 0) {
-            long delta = (now - lastInputTime) / 1_000_000;
-            tvLatency.setText(delta + " ms");
+        if (event.getAction() != MotionEvent.ACTION_MOVE || !acceptDevice(device)) return super.onGenericMotionEvent(event);
+        int[] axes = { MotionEvent.AXIS_X, MotionEvent.AXIS_Y,
+                supportedAxis(device, MotionEvent.AXIS_Z, MotionEvent.AXIS_RX),
+                supportedAxis(device, MotionEvent.AXIS_RZ, MotionEvent.AXIS_RY),
+                supportedAxis(device, MotionEvent.AXIS_LTRIGGER, MotionEvent.AXIS_BRAKE),
+                supportedAxis(device, MotionEvent.AXIS_RTRIGGER, MotionEvent.AXIS_GAS) };
+        float[] raw = new float[6];
+        float[] display = new float[6];
+        for (int i = 0; i < axes.length; i++) {
+            raw[i] = rawAxis(event, axes[i]);
+            display[i] = displayAxis(device, axes[i], raw[i], i >= 4);
         }
-        lastInputTime = now;
-
-        // Left Stick — standard AXIS_X / AXIS_Y
-        float lx = event.getAxisValue(MotionEvent.AXIS_X);
-        float ly = event.getAxisValue(MotionEvent.AXIS_Y);
-
-        // Right Stick — try AXIS_Z/AXIS_RZ first, then AXIS_RX/AXIS_RY
-        float rx = event.getAxisValue(MotionEvent.AXIS_Z);
-        float ry = event.getAxisValue(MotionEvent.AXIS_RZ);
-        if (rx == 0f && ry == 0f) {
-            rx = event.getAxisValue(MotionEvent.AXIS_RX);
-            ry = event.getAxisValue(MotionEvent.AXIS_RY);
-        }
-
-        // Apply dead zone
-        lx = applyDeadZone(lx);
-        ly = applyDeadZone(ly);
-        rx = applyDeadZone(rx);
-        ry = applyDeadZone(ry);
-
-        stickLeft.setPosition(lx, ly);
-        stickRight.setPosition(rx, ry);
-        tvLeftStick.setText(String.format(Locale.US, "X:%.2f Y:%.2f", lx, ly));
-        tvRightStick.setText(String.format(Locale.US, "X:%.2f Y:%.2f", rx, ry));
-
-        // Triggers — try LTRIGGER/RTRIGGER, then BRAKE/GAS, then AXIS_RX (DualSense quirk)
-        float lt = event.getAxisValue(MotionEvent.AXIS_LTRIGGER);
-        float rt = event.getAxisValue(MotionEvent.AXIS_RTRIGGER);
-        if (lt == 0f) lt = event.getAxisValue(MotionEvent.AXIS_BRAKE);
-        if (rt == 0f) rt = event.getAxisValue(MotionEvent.AXIS_GAS);
-
-        triggerLT.setValue(lt);
-        triggerRT.setValue(rt);
-
-        // D-Pad via HAT
-        float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
-        float hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
-        setButtonState(btnDpadLeft, hatX < -0.5f);
-        setButtonState(btnDpadRight, hatX > 0.5f);
-        setButtonState(btnDpadUp, hatY < -0.5f);
-        setButtonState(btnDpadDown, hatY > 0.5f);
-
-        // Calibration
-        updateCalibration(lx, ly, rx, ry, lt, rt);
-
-        // Raw data
-        updateRawData(event, lx, ly, rx, ry, lt, rt, hatX, hatY);
-
+        measurements.record(raw, event.getEventTime(), restTest);
+        if (firstEventMillis < 0) firstEventMillis = event.getEventTime();
+        JSONArray sample = new JSONArray();
+        sample.put(event.getEventTime() - firstEventMillis);
+        for (float value : raw) sample.put(InputDiagnostics.finite(value) ? (Object) (double) value : JSONObject.NULL);
+        recentSamples.put(sample);
+        if (recentSamples.length() > 256) recentSamples.remove(0);
+        stickLeft.setPosition(display[0], display[1]);
+        stickRight.setPosition(display[2], display[3]);
+        tvLeftStick.setText("API X:" + axisText(raw[0]) + " Y:" + axisText(raw[1]));
+        tvRightStick.setText("API X:" + axisText(raw[2]) + " Y:" + axisText(raw[3]));
+        triggerLT.setValue(display[4]); triggerRT.setValue(display[5]);
+        float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X), hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
+        setButtonState(btnDpadLeft, hatX < -.5f); setButtonState(btnDpadRight, hatX > .5f);
+        setButtonState(btnDpadUp, hatY < -.5f); setButtonState(btnDpadDown, hatY > .5f);
+        updateCalibration(raw[0], raw[1], raw[2], raw[3], raw[4], raw[5]);
+        updateRawData(event, raw[0], raw[1], raw[2], raw[3], raw[4], raw[5], hatX, hatY);
         return true;
     }
 
     protected float applyDeadZone(float value) {
-        if (Math.abs(value) < deadZone) return 0f;
-        float sign = value > 0 ? 1f : -1f;
-        return sign * (Math.abs(value) - deadZone) / (1f - deadZone);
+        return InputDiagnostics.filterStick(value, -1, 1, deadZone);
     }
 
     // --- Button input ---
@@ -339,11 +392,10 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         InputDevice device = event.getDevice();
-        if (device != null && isGamepad(device)) {
-            onGamepadConnected(device);
-            totalPresses++;
+        if (acceptDevice(device)) {
+            if (event.getRepeatCount() == 0) totalPresses++;
             tvPressCount.setText(String.valueOf(totalPresses));
-            buttonPressTime.put(keyCode, System.currentTimeMillis());
+            if (event.getRepeatCount() == 0) buttonPressTime.put(keyCode, event.getEventTime());
             setButtonForKeyCode(keyCode, true);
             return true;
         }
@@ -353,11 +405,11 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         InputDevice device = event.getDevice();
-        if (device != null && isGamepad(device)) {
+        if (acceptDevice(device)) {
             setButtonForKeyCode(keyCode, false);
-            Long pressTime = buttonPressTime.get(keyCode);
+            Long pressTime = buttonPressTime.remove(keyCode);
             if (pressTime != null) {
-                long held = System.currentTimeMillis() - pressTime;
+                long held = event.getEventTime() - pressTime;
                 tvRawData.setText(String.format(Locale.US,
                         "Button: %s\nKeyCode: %d | Held: %d ms",
                         KeyEvent.keyCodeToString(keyCode), keyCode, held));
@@ -383,9 +435,9 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
             case KeyEvent.KEYCODE_BUTTON_R1:
                 setButtonState(btnRB, pressed); break;
             case KeyEvent.KEYCODE_BUTTON_L2:
-                setButtonState(btnLB, pressed); break;
+                triggerLT.setValue(pressed ? 1 : 0); break;
             case KeyEvent.KEYCODE_BUTTON_R2:
-                setButtonState(btnRB, pressed); break;
+                triggerRT.setValue(pressed ? 1 : 0); break;
             case KeyEvent.KEYCODE_BUTTON_THUMBL:
                 setButtonState(btnL3, pressed); break;
             case KeyEvent.KEYCODE_BUTTON_THUMBR:
@@ -441,24 +493,10 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
 
     protected void updateRawData(MotionEvent event, float lx, float ly, float rx, float ry,
                                   float lt, float rt, float hatX, float hatY) {
-        // Show ALL axes for debugging
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(Locale.US, "L-Stick: X=%.3f Y=%.3f\n", lx, ly));
-        sb.append(String.format(Locale.US, "R-Stick: X=%.3f Y=%.3f\n", rx, ry));
-        sb.append(String.format(Locale.US, "%s=%.3f  %s=%.3f\n",
-                getTriggerLeftLabel(), lt, getTriggerRightLabel(), rt));
-        sb.append(String.format(Locale.US, "D-Pad: X=%.1f Y=%.1f\n", hatX, hatY));
-
-        // Extra axes for debugging
-        float axRx = event.getAxisValue(MotionEvent.AXIS_RX);
-        float axRy = event.getAxisValue(MotionEvent.AXIS_RY);
-        float axBrake = event.getAxisValue(MotionEvent.AXIS_BRAKE);
-        float axGas = event.getAxisValue(MotionEvent.AXIS_GAS);
-        if (axRx != 0 || axRy != 0) {
-            sb.append(String.format(Locale.US, "RX=%.3f RY=%.3f\n", axRx, axRy));
-        }
-        if (axBrake != 0 || axGas != 0) {
-            sb.append(String.format(Locale.US, "Brake=%.3f Gas=%.3f", axBrake, axGas));
+        StringBuilder sb = new StringBuilder("Исходные оси Android API\n");
+        for (InputDevice.MotionRange range : event.getDevice().getMotionRanges()) {
+            sb.append(MotionEvent.axisToString(range.getAxis())).append(": ")
+                    .append(axisText(event.getAxisValue(range.getAxis()))).append('\n');
         }
 
         tvRawData.setText(sb.toString());
@@ -483,7 +521,26 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     }
 
     protected void onGamepadConnected(InputDevice device) {
+        if (connectedDevice == null || connectedDevice.getId() != device.getId()) {
+            saveLastReport();
+            stopVibration();
+            clearLiveInput();
+            resetCalibration();
+        }
         connectedDevice = device;
+        reportDeviceName = device.getName();
+        try {
+            JSONArray ranges = new JSONArray();
+            for (InputDevice.MotionRange range : device.getMotionRanges()) {
+                ranges.put(new JSONObject().put("axis", range.getAxis()).put("source", range.getSource())
+                        .put("min", (double) range.getMin()).put("max", (double) range.getMax())
+                        .put("flat", (double) range.getFlat()).put("fuzz", (double) range.getFuzz()));
+            }
+            capabilities = new JSONObject().put("axis_ranges", ranges)
+                    .put("vibration_motors", getGamepadVibrators().size())
+                    .put("vibration_source", "android-input-device-api")
+                    .put("unavailable_reason", "Unavailable axes/motors are not exposed by this device, transport or Android driver; no phone vibration fallback.");
+        } catch (Exception ignored) { capabilities = new JSONObject(); }
         tvStatus.setText("✅ Подключён!");
         tvStatus.setTextColor(getAccentColor());
         String info = device.getName();
@@ -500,11 +557,15 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     @Override
     public void onInputDeviceAdded(int deviceId) {
         InputDevice device = InputDevice.getDevice(deviceId);
-        if (device != null && isGamepad(device)) onGamepadConnected(device);
+        if (connectedDevice == null && device != null && isGamepad(device)) onGamepadConnected(device);
     }
 
     @Override
     public void onInputDeviceRemoved(int deviceId) {
+        if (connectedDevice == null || connectedDevice.getId() != deviceId) return;
+        saveLastReport();
+        stopVibration();
+        clearLiveInput();
         connectedDevice = null;
         tvStatus.setText("❌ Отключён");
         tvStatus.setTextColor(Color.parseColor("#E74856"));
@@ -514,12 +575,265 @@ public abstract class BaseTestActivity extends AppCompatActivity implements Inpu
     @Override
     public void onInputDeviceChanged(int deviceId) {
         InputDevice device = InputDevice.getDevice(deviceId);
-        if (device != null && isGamepad(device)) onGamepadConnected(device);
+        if (connectedDevice != null && connectedDevice.getId() == deviceId && device != null) onGamepadConnected(device);
+    }
+
+    private void setupSessionActions() {
+        LinearLayout parent = (LinearLayout) tvControllerName.getParent();
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        parent.addView(row, parent.indexOfChild(tvControllerName) + 1);
+        addAction(row, "Устройство", this::selectDevice);
+        restButton = addAction(row, "Тест покоя", () -> {
+            restTest = !restTest;
+            restButton.setText(restTest ? "Закончить покой" : "Тест покоя");
+            if (restTest) new AlertDialog.Builder(this).setTitle("Измерение центра")
+                    .setMessage("Отпустите стики. Записываются только полученные события Android API. Отсутствие событий означает «не измерено», а не исправность.")
+                    .setPositiveButton("Понятно", null).show();
+        });
+        LinearLayout reports = new LinearLayout(this);
+        parent.addView(reports, parent.indexOfChild(row) + 1);
+        addAction(reports, "Экспорт", () -> {
+            if (measurements.frames() == 0 && totalPresses == 0) {
+                message("Сначала выполните измерение."); return;
+            }
+            try {
+                pendingExport = report().toString(2);
+                exportReport.launch("remteh-controller-" + sessionId + ".json");
+            } catch (Exception error) { message("Не удалось подготовить отчёт."); }
+        });
+        addAction(reports, "Сравнить", () -> importReport.launch("application/json"));
+        addAction(reports, "История", this::showHistory);
+        LinearLayout details = new LinearLayout(this);
+        parent.addView(details, parent.indexOfChild(reports) + 1);
+        addAction(details, "Комментарий", () -> {
+            EditText input = new EditText(this); input.setText(comment);
+            input.setFilters(new InputFilter[]{new InputFilter.LengthFilter(1000)});
+            new AlertDialog.Builder(this).setTitle("Комментарий к сессии").setView(input)
+                    .setPositiveButton("Сохранить", (dialog, which) -> comment = input.getText().toString())
+                    .setNegativeButton("Отмена", null).show();
+        });
+        addAction(details, "Печатный отчёт", () -> {
+            try {
+                pendingExport = "<!doctype html><html lang=ru><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
+                        + "<title>RemTeh Controller Report</title><style>body{font:16px system-ui;padding:2rem}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>"
+                        + "<h1>Отчёт о контроллере</h1><p>Наблюдения Android API. Исправность не подтверждается автоматически. "
+                        + "Откройте файл в браузере и используйте Печать / PDF.</p><pre>"
+                        + html(report().toString(2)) + "</pre></html>";
+                exportPrintable.launch("remteh-controller-" + sessionId + ".html");
+            } catch (Exception error) { message("Не удалось подготовить отчёт."); }
+        });
+        tvControllerName.setOnClickListener(v -> selectDevice());
+    }
+
+    private Button addAction(LinearLayout row, String title, Runnable action) {
+        Button button = new Button(this);
+        button.setText(title);
+        button.setTextSize(12);
+        button.setAllCaps(false);
+        button.setOnClickListener(v -> action.run());
+        row.addView(button, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        return button;
+    }
+
+    private void selectDevice() {
+        List<InputDevice> devices = new ArrayList<>();
+        for (int id : InputDevice.getDeviceIds()) {
+            InputDevice device = InputDevice.getDevice(id);
+            if (device != null && isGamepad(device)) devices.add(device);
+        }
+        if (devices.isEmpty()) { message("Подключите контроллер по USB или Bluetooth."); return; }
+        String[] titles = new String[devices.size()];
+        for (int i = 0; i < devices.size(); i++) titles[i] = devices.get(i).getName();
+        new AlertDialog.Builder(this).setTitle("Активный контроллер").setItems(titles,
+                (dialog, which) -> onGamepadConnected(devices.get(which))).show();
+    }
+
+    private void clearLiveInput() {
+        buttonPressTime.clear();
+        measurements.pause();
+        lastInputTime = 0;
+        restTest = false;
+        if (restButton != null) restButton.setText("Тест покоя");
+        for (TextView button : new TextView[]{btnLB, btnRB, btnL3, btnR3, btnDpadUp,
+                btnDpadDown, btnDpadLeft, btnDpadRight, btnStart, btnSelect, btnSystem, btnExtra})
+            setButtonState(button, false);
+        TextView[] face = {btnFace1, btnFace2, btnFace3, btnFace4};
+        for (int i = 0; i < face.length; i++) setFaceButtonState(face[i], false, getFaceButtonColors()[i]);
+        stickLeft.setPosition(0, 0); stickRight.setPosition(0, 0);
+        triggerLT.setValue(0); triggerRT.setValue(0);
+        tvLeftStick.setText("—"); tvRightStick.setText("—");
+        tvLatency.setText("—");
+    }
+
+    private String html(String value) { return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;"); }
+
+    private JSONObject axisReport(InputDiagnostics.Axis axis) throws Exception {
+        JSONObject result = new JSONObject().put("samples", axis.count());
+        result.put("min", axis.count() == 0 ? JSONObject.NULL : axis.min());
+        result.put("max", axis.count() == 0 ? JSONObject.NULL : axis.max());
+        result.put("mean", axis.count() == 0 ? JSONObject.NULL : axis.mean());
+        result.put("standard_deviation", axis.count() == 0 ? JSONObject.NULL : axis.deviation());
+        result.put("last", axis.count() == 0 ? JSONObject.NULL : axis.last());
+        return result;
+    }
+
+    private JSONObject report() throws Exception {
+        JSONObject axes = new JSONObject(), resting = new JSONObject();
+        for (int i = 0; i < InputDiagnostics.AXES.length; i++) {
+            axes.put(InputDiagnostics.AXES[i], axisReport(measurements.axis(i)));
+            if (i < 4) resting.put(InputDiagnostics.AXES[i], axisReport(measurements.restingAxis(i)));
+        }
+        return new JSONObject().put("schema", 1).put("kind", "controller")
+                .put("session_id", sessionId).put("started_at_ms", sessionStarted)
+                .put("timezone", java.util.TimeZone.getDefault().getID())
+                .put("duration_ms", SystemClock.elapsedRealtime() - sessionMono)
+                .put("comment", comment).put("previous_session_id", previousSession == null ? JSONObject.NULL : previousSession)
+                .put("capabilities", capabilities)
+                .put("conclusion", measurements.frames() == 0 && totalPresses == 0 ? "not-measured" : "observed")
+                .put("application", getPackageName())
+                .put("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionName)
+                .put("os", "Android " + Build.VERSION.RELEASE)
+                .put("device", reportDeviceName).put("source", "android-input-api")
+                .put("transport", "not-reported-by-api").put("display_dead_zone", (double) deadZone)
+                .put("frames", measurements.frames()).put("button_presses", totalPresses)
+                .put("axes", axes).put("resting_axes", resting)
+                .put("event_interval_ms", axisReport(measurements.intervals()))
+                .put("recent_samples", recentSamples)
+                .put("trace_truncated", measurements.frames() > recentSamples.length())
+                .put("limitations", "API values may already be processed by the OS. Event intervals are not latency. No hardware calibration or firmware writes.");
+    }
+
+    private void writeReport(Uri uri) {
+        if (uri == null || pendingExport == null) return;
+        try (OutputStream output = getContentResolver().openOutputStream(uri, "wt")) {
+            if (output == null) throw new java.io.IOException();
+            output.write(pendingExport.getBytes(StandardCharsets.UTF_8));
+            message("Отчёт сохранён. Данные никуда не отправлялись.");
+        } catch (Exception error) { message("Не удалось сохранить файл."); }
+        finally { pendingExport = null; }
+    }
+
+    private void compareReport(Uri uri) {
+        if (uri == null) return;
+        try (InputStream input = getContentResolver().openInputStream(uri);
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+            if (input == null) throw new java.io.IOException();
+            byte[] chunk = new byte[4096]; int count;
+            while ((count = input.read(chunk)) != -1) {
+                if (buffer.size() + count > 1024 * 1024) throw new IllegalArgumentException();
+                buffer.write(chunk, 0, count);
+            }
+            String text = new String(buffer.toByteArray(), StandardCharsets.UTF_8);
+            checkJsonDepth(text);
+            showComparison(new JSONObject(text));
+        } catch (Exception error) { message("Нужен корректный отчёт RemTeh о контроллере (schema 1), до 1 МБ."); }
+    }
+
+    private void checkJsonDepth(String text) {
+        int depth = 0; boolean quoted = false, escaped = false;
+        for (char c : text.toCharArray()) {
+            if (quoted) {
+                if (escaped) escaped = false;
+                else if (c == '\\') escaped = true;
+                else if (c == '"') quoted = false;
+            } else if (c == '"') quoted = true;
+            else if (c == '{' || c == '[') { if (++depth > 16) throw new IllegalArgumentException(); }
+            else if (c == '}' || c == ']') depth--;
+        }
+    }
+
+    private void showComparison(JSONObject previous) throws Exception {
+        if (!(previous.get("schema") instanceof Number) || ((Number) previous.get("schema")).doubleValue() != 1
+                || !(previous.get("device") instanceof String) || !(previous.get("session_id") instanceof String)
+                || !"controller".equals(previous.getString("kind"))
+                || !"android-input-api".equals(previous.getString("source"))
+                || previous.getString("device").length() > 200) throw new IllegalArgumentException();
+        StringBuilder text = new StringBuilder("Среднее в явном тесте покоя: файл → текущая сессия\n");
+        if (!reportDeviceName.equals(previous.getString("device")))
+            text.append("Названия устройств различаются. Прямое сравнение может быть некорректным.\n");
+        if (!capabilities.toString().equals(previous.optJSONObject("capabilities") == null ? "" : previous.getJSONObject("capabilities").toString()))
+            text.append("Возможности или диапазоны осей различаются либо неизвестны. Сравнение ограничено.\n");
+        if (previous.optDouble("display_dead_zone", -1) != (double) deadZone)
+            text.append("Фильтр отображения отличается; значения API в отчёте не фильтруются.\n");
+        String importedId = previous.getString("session_id");
+        UUID.fromString(importedId);
+        JSONObject axes = previous.getJSONObject("resting_axes");
+        for (int i = 0; i < 4; i++) {
+            JSONObject axis = axes.getJSONObject(InputDiagnostics.AXES[i]);
+            Object count = axis.get("samples");
+            if (!(count instanceof Number) || ((Number) count).doubleValue() < 0
+                    || ((Number) count).doubleValue() > 1e12 || ((Number) count).doubleValue() != Math.floor(((Number) count).doubleValue())) throw new IllegalArgumentException();
+            String old = "не измерено", current = "не измерено";
+            if (((Number) count).doubleValue() > 0) {
+                Object value = axis.get("mean");
+                if (!(value instanceof Number) || (Double.isNaN(((Number) value).doubleValue()) || Double.isInfinite(((Number) value).doubleValue()))) throw new IllegalArgumentException();
+                old = String.format(Locale.US, "%.4f", ((Number) value).doubleValue());
+            }
+            if (measurements.restingAxis(i).count() > 0)
+                current = String.format(Locale.US, "%.4f", measurements.restingAxis(i).mean());
+            text.append(InputDiagnostics.AXES[i]).append(": ").append(old).append(" → ").append(current).append('\n');
+        }
+        text.append("Сравнивайте одинаковый контроллер и подключение. Это наблюдения API, не автоматический диагноз.");
+        new AlertDialog.Builder(this).setTitle("Сравнение измерений").setMessage(text)
+                .setPositiveButton("Закрыть", null)
+                .setNeutralButton("Связать до / после", (dialog, which) -> { previousSession = importedId; message("Сессии связаны в текущем отчёте."); }).show();
+    }
+
+    private void saveLastReport() {
+        if (measurements.frames() == 0 && totalPresses == 0) return;
+        try {
+            JSONArray existing = new JSONArray(getPreferences(MODE_PRIVATE).getString("history", "[]"));
+            JSONArray history = new JSONArray().put(report());
+            for (int i = 0; i < existing.length() && history.length() < 20; i++)
+                if (!sessionId.equals(existing.getJSONObject(i).optString("session_id")))
+                    history.put(existing.getJSONObject(i));
+            getPreferences(MODE_PRIVATE).edit().putString("history", history.toString()).apply();
+        } catch (Exception error) { message("Историю не удалось сохранить. Экспортируйте отчёт в файл."); }
+    }
+
+    private void showHistory() {
+        try {
+            JSONArray history = new JSONArray(getPreferences(MODE_PRIVATE).getString("history", "[]"));
+            if (history.length() == 0) { message("История пока пуста."); return; }
+            String[] titles = new String[history.length()];
+            for (int i = 0; i < titles.length; i++) {
+                JSONObject row = history.getJSONObject(i);
+                titles[i] = new java.util.Date(row.getLong("started_at_ms")).toString() + " · " + row.getString("device");
+            }
+            new AlertDialog.Builder(this).setTitle("Последние 20 сессий").setItems(titles, (dialog, which) -> {
+                try { showComparison(history.getJSONObject(which)); }
+                catch (Exception error) { message("Сохранённый отчёт повреждён."); }
+            }).show();
+        } catch (Exception error) { message("История недоступна."); }
+    }
+
+    private void message(String text) { Toast.makeText(this, text, Toast.LENGTH_LONG).show(); }
+
+    @Override
+    protected void onPause() {
+        saveLastReport();
+        stopVibration();
+        clearLiveInput();
+        AdView ad = findViewById(R.id.adView);
+        if (ad != null) ad.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (inputManager != null && connectedDevice == null) checkConnectedDevices();
+        AdView ad = findViewById(R.id.adView);
+        if (ad != null) ad.resume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        stopVibration();
+        AdView ad = findViewById(R.id.adView);
+        if (ad != null) ad.destroy();
         if (inputManager != null) inputManager.unregisterInputDeviceListener(this);
     }
 }
