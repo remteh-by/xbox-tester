@@ -1,6 +1,10 @@
 # Xbox Tester
 
-Android diagnostic application for Xbox controller. The source candidate is **1.1.0 / build 2**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
+Android diagnostic application for Xbox controller. The published debug preview is **1.1.0 / build 2**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
+
+[Debug APK](https://github.com/remteh-by/xbox-tester/releases/download/v1.1.0-preview.1/Xbox-Tester-1.1.0-b2-debug.apk) · [Release, SHA-256 и исходники](https://github.com/remteh-by/xbox-tester/releases/tag/v1.1.0-preview.1)
+
+Debug APK не предназначен для обновления существующей release-установки. Оригинальный сертификат не заменялся; проверка физических контроллеров не выполнялась.
 
 ## Что изменено в 1.1.0
 
