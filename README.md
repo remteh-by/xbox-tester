@@ -1,12 +1,22 @@
 # Xbox Tester
 
-Android diagnostic application for Xbox controller. The published debug preview is **1.1.0 / build 2**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
+Android diagnostic application for Xbox controller. The published debug preview is **1.2.0 / build 3**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
 
-[Debug APK](https://github.com/remteh-by/xbox-tester/releases/download/v1.1.0-preview.1/Xbox-Tester-1.1.0-b2-debug.apk) · [Release, SHA-256 и исходники](https://github.com/remteh-by/xbox-tester/releases/tag/v1.1.0-preview.1)
+[Debug APK](https://github.com/remteh-by/xbox-tester/releases/download/v1.2.0-preview.1/Xbox-Tester-1.2.0-b3-debug.apk) · [Release, SHA-256 и исходники](https://github.com/remteh-by/xbox-tester/releases/tag/v1.2.0-preview.1)
 
 Debug APK не предназначен для обновления существующей release-установки. Оригинальный сертификат не заменялся; проверка физических контроллеров не выполнялась.
 
-## Что изменено в 1.1.0
+![Actual Xbox Tester 1.2.0 debug build 3](docs/assets/app-1.2.0.png)
+
+## Что изменено в 1.2.0
+
+- Новый графитовый интерфейс: компактная карточка подключения, удобное меню отчётов и две колонки на широком экране.
+- Исправлено открытие экрана: ScrollView теперь содержит один корневой элемент. Поворот не пересоздаёт активную сессию, круглые шкалы не растягиваются.
+- Настоящее фото контроллера без фона; [автор, источник и лицензия](PHOTO-CREDITS.md). Фото не подменяет определение подключённого устройства.
+- Триггеры без данных показывают «Не измерено», отсутствие оси — «Недоступно». Тест покоя требует подключённый контроллер.
+- Добровольная [поддержка RemTeh на Ko-fi](https://ko-fi.com/pavelzayats), доступная в меню и внизу экрана. Приглашение после сохранения отчёта появляется не чаще раза в 30 дней. Все проверки бесплатны; карточные данные обрабатывает Ko-fi.
+
+## Возможности измерений
 
 - Исходные значения Android API сохраняются до фильтра отображения. Dead zone меняет картинку, а не результаты теста.
 - Min/max, среднее и разброс не предполагают нулевой исходный диапазон. «Тест покоя» собирает отдельную выборку, пока вы не трогаете стики.
@@ -33,9 +43,9 @@ Use JDK 17, Android SDK 35 and the committed Gradle 8.9 wrapper. Debug builds ne
 
 ## Distribution and acceptance
 
-See the [release list](https://github.com/remteh-by/xbox-tester/releases) for actually published files. This README does not claim that the 1.1.0 candidate is already published. There is no verified Google Play purchase URL in this repository; no placeholder purchase button is offered.
+See the [release list](https://github.com/remteh-by/xbox-tester/releases) for actually published files. Version 1.2.0 is distributed as a debug preview. There is no verified Google Play purchase URL in this repository; no placeholder purchase button is offered.
 
-Current validation: shared diagnostics unit tests, Android debug build and lint. Pending: launch on a physical Android device, USB and Bluetooth with Xbox controller, device switching, real vibration and update over the existing signed app. Debug installation must not replace or delete user data to work around a certificate mismatch.
+Current validation: shared diagnostics unit tests, Android debug build/lint, emulator startup, support dialog and rotation. Pending: launch on a physical Android device, USB and Bluetooth with Xbox controller, device switching, real vibration and update over the existing signed app. Debug installation must not replace or delete user data to work around a certificate mismatch.
 
 ## License
 
