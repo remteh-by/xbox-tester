@@ -13,7 +13,7 @@ public class StickView extends View {
     private float stickX = 0f;
     private float stickY = 0f;
     private int accentColor = Color.parseColor("#1DB954");
-    private Paint gridPaint, outerRingPaint, dotPaint, dotGlowPaint, deadZonePaint, trailPaint;
+    private Paint backgroundPaint, gridPaint, outerRingPaint, dotPaint, dotGlowPaint, deadZonePaint, trailPaint;
     private float deadZone = 0.05f;
     private float[] trailX = new float[12];
     private float[] trailY = new float[12];
@@ -24,18 +24,20 @@ public class StickView extends View {
     public StickView(Context context, AttributeSet attrs, int defStyleAttr) { super(context, attrs, defStyleAttr); init(); }
 
     private void init() {
+        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        backgroundPaint.setColor(Color.parseColor("#18212A"));
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        gridPaint.setColor(Color.parseColor("#1A1A35"));
+        gridPaint.setColor(Color.parseColor("#24313D"));
         gridPaint.setStrokeWidth(1f);
         gridPaint.setStyle(Paint.Style.STROKE);
 
         outerRingPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        outerRingPaint.setColor(Color.parseColor("#2A2A45"));
+        outerRingPaint.setColor(Color.parseColor("#344553"));
         outerRingPaint.setStyle(Paint.Style.STROKE);
         outerRingPaint.setStrokeWidth(2f);
 
         deadZonePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        deadZonePaint.setColor(Color.parseColor("#1A1A2E"));
+        deadZonePaint.setColor(Color.parseColor("#273542"));
         deadZonePaint.setStyle(Paint.Style.FILL);
 
         dotPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -80,7 +82,8 @@ public class StickView extends View {
         super.onDraw(canvas);
         float cx = getWidth() / 2f;
         float cy = getHeight() / 2f;
-        float radius = Math.min(cx, cy) - 12f;
+        float radius = Math.max(0f, Math.min(cx, cy) - 5f * getResources().getDisplayMetrics().density);
+        canvas.drawCircle(cx, cy, radius, backgroundPaint);
 
         // Outer ring
         canvas.drawCircle(cx, cy, radius, outerRingPaint);

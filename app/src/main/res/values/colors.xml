@@ -1,13 +1,13 @@
 <resources>
     <!-- Base -->
-    <color name="bg_primary">#0A0A14</color>
-    <color name="bg_secondary">#12122A</color>
-    <color name="bg_card">#1A1A35</color>
-    <color name="bg_card_elevated">#222245</color>
+    <color name="bg_primary">#11171E</color>
+    <color name="bg_secondary">#161F27</color>
+    <color name="bg_card">#1B252F</color>
+    <color name="bg_card_elevated">#24313D</color>
     <color name="text_primary">#F0F0F5</color>
-    <color name="text_secondary">#8888AA</color>
-    <color name="text_muted">#555570</color>
-    <color name="divider">#2A2A45</color>
+    <color name="text_secondary">#BBC8D5</color>
+    <color name="text_muted">#A9B9C9</color>
+    <color name="divider">#344454</color>
 
     <!-- Xbox -->
     <color name="xbox_green">#107C10</color>
@@ -37,7 +37,7 @@
     <color name="ps_triangle">#56C7A2</color>
 
     <!-- State -->
-    <color name="btn_off">#2A2A45</color>
+    <color name="btn_off">#344454</color>
     <color name="btn_on">#107C10</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

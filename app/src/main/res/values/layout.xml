@@ -1,0 +1,1 @@
+<resources><integer name="content_orientation">1</integer><dimen name="panel_width">-1px</dimen><dimen name="column_gap">0dp</dimen><integer name="photo_orientation">0</integer><dimen name="photo_width">120dp</dimen><dimen name="hero_text_width">0dp</dimen></resources>

@@ -13,6 +13,7 @@ import android.view.View;
 public class TriggerView extends View {
 
     private float value = 0f;
+    private boolean sampled = false, available = true;
     private int accentColor = Color.parseColor("#107C10");
     private Paint bgPaint, fillPaint, glowPaint, textPaint, borderPaint;
     private RectF bounds = new RectF();
@@ -24,7 +25,7 @@ public class TriggerView extends View {
 
     private void init() {
         bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bgPaint.setColor(Color.parseColor("#1A1A35"));
+        bgPaint.setColor(Color.parseColor("#1B252F"));
 
         fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fillPaint.setColor(accentColor);
@@ -34,13 +35,13 @@ public class TriggerView extends View {
         glowPaint.setAlpha(40);
 
         borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        borderPaint.setColor(Color.parseColor("#2A2A45"));
+        borderPaint.setColor(Color.parseColor("#344454"));
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(2f);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(Color.parseColor("#F0F0F5"));
-        textPaint.setTextSize(28f);
+        textPaint.setTextSize(13f * getResources().getDisplayMetrics().scaledDensity);
         textPaint.setTextAlign(Paint.Align.CENTER);
     }
 
@@ -53,9 +54,12 @@ public class TriggerView extends View {
     }
 
     public void setValue(float v) {
-        this.value = Math.max(0f, Math.min(1f, v));
+        sampled = true; available = !Float.isNaN(v) && !Float.isInfinite(v);
+        this.value = available ? Math.max(0f, Math.min(1f, v)) : 0f;
         invalidate();
     }
+
+    public void clear() { sampled = false; value = 0; invalidate(); }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -81,7 +85,7 @@ public class TriggerView extends View {
         }
 
         // Percentage text
-        String pct = Math.round(value * 100) + "%";
+        String pct = !sampled ? "Не измерено" : !available ? "Недоступен API" : Math.round(value * 100) + "%";
         float textY = h / 2f - (textPaint.descent() + textPaint.ascent()) / 2f;
         canvas.drawText(pct, w / 2f, textY, textPaint);
     }
