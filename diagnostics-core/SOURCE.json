@@ -5,7 +5,7 @@
     "diagnostics-core/build.gradle": "fcb147d6c43faa6092e10cdc6fbde1da3230315ffc470a6d3b8040428dd855c1",
     "diagnostics-core/src/main/java/com/remteh/diagnostics/InputDiagnostics.java": "fa4e4fa70155a9016940bc32080a25dd0a356c146ba7675d4c714f33ee1d2869",
     "diagnostics-core/src/test/java/com/remteh/diagnostics/InputDiagnosticsTest.java": "dd6177ea1fe28c170593d98ccd786b02564d148c7e337708db2ca0061f9723c5",
-    "app/src/main/java/com/remteh/xboxtester/BaseTestActivity.java": "56b5d344097165986d0693740a693e6ca846daea66c6354cea75194d7f144334"
+    "app/src/main/java/com/remteh/xboxtester/BaseTestActivity.java": "68b12d0667d1d4bf88763ec9150babab8daa47ee848a903b400b514bfb8aa143"
   },
-  "upstream": "canonical Device Lab source; see docs/DEVICE-LAB.md"
+  "upstream": "https://github.com/remteh-by/Device-Lab; see docs/DEVICE-LAB.md"
 }
