@@ -112,7 +112,7 @@
             </LinearLayout>
         </LinearLayout>
         <Button android:id="@+id/btnSupport" android:layout_width="match_parent" android:layout_height="48dp" android:text="♡ Поддержать бесплатные тесты RemTeh" android:textAllCaps="false" android:textSize="14sp" android:layout_marginBottom="12dp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RemTeh.by · Xbox Tester 1.2.0&#10;Измерения Android API · без записи в контроллер" android:textSize="13sp" android:textColor="@color/text_primary" android:paddingTop="8dp" android:paddingBottom="20dp" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RemTeh.by · Xbox Tester 1.2.1&#10;Измерения Android API · без записи в контроллер" android:textSize="13sp" android:textColor="@color/text_primary" android:paddingTop="8dp" android:paddingBottom="20dp" />
         <com.google.android.gms.ads.AdView android:id="@+id/adView" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="bottom" ads:adSize="BANNER" ads:adUnitId="ca-app-pub-3940256099942544/6300978111" />
     </LinearLayout>
 </ScrollView>
