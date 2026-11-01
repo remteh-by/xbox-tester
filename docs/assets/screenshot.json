@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "version": "1.2.2",
+  "build": 5,
+  "capture_source": "Android 15 SDK ARM64 emulator, exact debug APK",
+  "synthetic_device_data": true,
+  "images": {
+    "app-1.2.2.png": {
+      "sha256": "f9697cf6d59ce4239b7e9ba10afc5ad3e128c85d1a94f952de12a73895519dc6",
+      "width": 1080,
+      "height": 1920
+    },
+    "app-1.2.2-landscape.png": {
+      "sha256": "d7e59f13cbce9a04f21ea5b8c2df91bc1c696f59a8e75f938cca0c41bc40ee51",
+      "width": 1920,
+      "height": 1080
+    },
+    "support-method.png": {
+      "sha256": "5b18c164c5fdc52d8d7c8239ac209287fbd70e0102f233b47a181027dd6c3b13",
+      "width": 1920,
+      "height": 1080
+    }
+  }
+}
