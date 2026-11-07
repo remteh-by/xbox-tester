@@ -22,7 +22,7 @@ jobs:
         with:
           packages: 'platform-tools'
           log-accepted-android-sdk-licenses: 'false'
-      - run: ./gradlew --no-daemon :diagnostics-core:test :app:assembleDebug :app:lintDebug
+      - run: ./gradlew --no-daemon --max-workers=2 --stacktrace :diagnostics-core:test :app:assembleDebug :app:lintDebug
       - name: Missing release identity fails closed
         shell: bash
         env:
