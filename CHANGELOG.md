@@ -1,5 +1,9 @@
 # Changes
 
+## 1.2.4 preview, build 7
+
+Если Android не смог записать сброс, текущий результат сохраняется. Перед сменой контроллера приложение также проверяет, удалось ли сохранить текущие измерения.
+
 ## 1.2.0 debug preview
 
 Graphite responsive UI with a genuine transparent controller photo and documented source. Fixed invalid ScrollView hierarchy and live-session rotation; circular stick backgrounds preserve their geometry. Clear unavailable/unmeasured trigger states, device requirement for rest tests, compact reports menu and 48dp actions. Optional RemTeh Ko-fi support in the footer/menu and after successful report saving/export; no payment-required features. Debug ads are disabled.

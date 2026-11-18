@@ -1,12 +1,16 @@
 # Xbox Tester
 
-Android diagnostic application for Xbox controller. The published debug preview is **1.2.3 / build 6**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
+Android diagnostic application for Xbox controller. The published debug preview is **1.2.4 / build 7**; Android 5.0+ API compatibility is declared, physical device coverage is listed separately below. Other OS packages are not provided by this repository.
 
-[Debug APK](https://github.com/remteh-by/xbox-tester/releases/download/v1.2.3-preview.1/Xbox-Tester-1.2.3-b6-debug.apk) · [Release, SHA-256 и исходники](https://github.com/remteh-by/xbox-tester/releases/tag/v1.2.3-preview.1)
+[Debug APK](https://github.com/remteh-by/xbox-tester/releases/download/v1.2.4-preview.1/Xbox-Tester-1.2.4-b7-debug.apk) · [Release, SHA-256 и исходники](https://github.com/remteh-by/xbox-tester/releases/tag/v1.2.4-preview.1)
 
 Debug APK не предназначен для обновления существующей release-установки. Оригинальный сертификат не заменялся; проверка физических контроллеров не выполнялась.
 
 ![Actual Xbox Tester 1.2.3 debug build 6](docs/assets/app-1.2.3.png)
+
+## Что изменено в 1.2.4
+
+Если Android не смог записать сброс, текущий результат сохраняется. Перед сменой контроллера приложение также проверяет, удалось ли сохранить текущие измерения.
 
 ## Что изменено в 1.2.3
 
@@ -47,7 +51,7 @@ Use JDK 17, Android SDK 35 and the committed Gradle 8.9 wrapper. Debug builds ne
 
 ## Distribution and acceptance
 
-See the [release list](https://github.com/remteh-by/xbox-tester/releases) for actually published files. Version 1.2.3 is distributed as a debug preview. There is no verified Google Play purchase URL in this repository; no placeholder purchase button is offered.
+See the [release list](https://github.com/remteh-by/xbox-tester/releases) for actually published files. Version 1.2.4 is distributed as a debug preview. There is no verified Google Play purchase URL in this repository; no placeholder purchase button is offered.
 
 Current validation: shared diagnostics unit tests, Android debug build/lint, emulator startup, support dialog and rotation. Pending: launch on a physical Android device, USB and Bluetooth with Xbox controller, device switching, real vibration and update over the existing signed app. Debug installation must not replace or delete user data to work around a certificate mismatch.
 
