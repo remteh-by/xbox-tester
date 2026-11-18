@@ -5,7 +5,7 @@
     "diagnostics-core/build.gradle": "fcb147d6c43faa6092e10cdc6fbde1da3230315ffc470a6d3b8040428dd855c1",
     "diagnostics-core/src/main/java/com/remteh/diagnostics/InputDiagnostics.java": "fa4e4fa70155a9016940bc32080a25dd0a356c146ba7675d4c714f33ee1d2869",
     "diagnostics-core/src/test/java/com/remteh/diagnostics/InputDiagnosticsTest.java": "dd6177ea1fe28c170593d98ccd786b02564d148c7e337708db2ca0061f9723c5",
-    "app/src/main/java/com/remteh/xboxtester/BaseTestActivity.java": "5e19fb3ec24a9bb49bc6fdd12d50c8511d1614a1fc1fae2a1be3ceadafdb494d",
+    "app/src/main/java/com/remteh/xboxtester/BaseTestActivity.java": "59317866f57fd1973e4656d98d112e998b6082111d96fbf26b60e5c5c9e03519",
     "app/src/main/java/com/remteh/support/SupportDialog.java": "b8f6be370fd0f806d906e862d313fc80f67ca93f842520d87b04a75ec09f6c33",
     "app/src/main/assets/remteh-support.json": "444cae9c6be3b8d6533dc43c54034fa2ac0a7d1c464e54412d0d02704aa77416"
   },
